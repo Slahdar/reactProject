@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 export const Register = () => {
     const [formData, setFormData] = useState({
       firstname: '',
@@ -120,3 +121,5 @@ export const Register = () => {
       </div>
     );
   };
+
+  export default Register;

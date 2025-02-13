@@ -8,14 +8,43 @@ import Game from "../components/Game/Game";
 
 const PrivateRoute = ({ children }) => {
   const { user } = useAuth();
-  return user ? children : <Navigate to="/login" />;
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+const PublicRoute = ({ children }) => {
+  const { user } = useAuth();
+  
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return children;
 };
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route 
+        path="/login" 
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } 
+      />
+      <Route 
+        path="/register" 
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        } 
+      />
       <Route
         path="/"
         element={
@@ -24,6 +53,8 @@ const App = () => {
           </PrivateRoute>
         }
       />
+      {/* Catch all route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
