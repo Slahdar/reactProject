@@ -1,10 +1,40 @@
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const express = require('express');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const authMiddleware = require('./middleware/auth');
 
-const httpServer = createServer();
+const app = express();
+const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: "http://localhost:5174/",
+  cors: {
+    origin: "http://localhost:5174",
+    methods: ["GET", "POST"]
+  }
 });
+
+app.use(cors());
+app.use(express.json());
+
+// Protected socket connection
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error("Authentication required"));
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    next(new Error("Invalid token"));
+  }
+});
+
+io.on("connection", (socket) => {
 
 const allUsers = {};
 const allRooms = [];
@@ -82,4 +112,10 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(3000);
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
