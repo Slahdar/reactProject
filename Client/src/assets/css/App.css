@@ -20,7 +20,7 @@
 }
 
 .water-background {
-  background-color: #4b495f;
+  background-color: #7b6fff;
 }
 
 .game-heading {
@@ -28,13 +28,14 @@
   border-radius: 5px;
   text-align: center;
   font-size: 40px;
+  color: white;
 }
 
 .square-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 10px;
+  row-gap: 5px;
+  column-gap: 5px;
 }
 
 .move-detection {
@@ -42,6 +43,7 @@
   justify-content: space-between;
   align-items: center;
   width: 400px;
+  color: white;
 }
 
 .finished-state {
@@ -54,9 +56,8 @@
   height: 30px;
   width: 120px;
   background-color: red;
-  border-bottom-left-radius: 50px;
   background-color: #4b495f;
-  border-top-right-radius: 50px;
+  border-radius: 5px;
   padding-top: 7px;
   font-size: 18px;
   padding-bottom: 5px;
@@ -81,5 +82,5 @@
 }
 
 .current-move-circle {
-  background-color: #dd7f9f !important;
+  background-color: #ae043d !important;
 }
