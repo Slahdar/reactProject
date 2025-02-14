@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Square from "../../Square/Square";
 import { io } from "socket.io-client";
-import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 
 const renderFrom = [
@@ -75,19 +74,29 @@ const Game = () => {
     }
   }, [gameState]);
 
-  const takePlayerName = async () => {
-    const result = await Swal.fire({
-      title: "Enter your name",
-      input: "text",
-      showCancelButton: true,
-      inputValidator: (value) => {
-        if (!value) {
-          return "You need to write something!";
-        }
-      },
-    });
-
-    return result;
+  const takePlayerName = () => {
+    // Récupérer le token du localStorage
+    const token = localStorage.getItem('token');
+    
+    // Décoder le token pour obtenir le username
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(window.atob(base64));
+      
+      // Retourner directement un objet qui correspond à la structure attendue par Swal.fire
+      return {
+        isConfirmed: true,
+        value: payload.username
+      };
+    } catch (error) {
+      console.error('Erreur lors de la récupération du nom d\'utilisateur:', error);
+      // En cas d'erreur, on retourne un nom par défaut
+      return {
+        isConfirmed: true,
+        value: 'Player'
+      };
+    }
   };
 
   socket?.on("opponentLeftMatch", () => {
@@ -144,7 +153,7 @@ const Game = () => {
     return (
       <div className="main-div">
         <button onClick={playOnlineClick} className="playOnline">
-          Play Online
+          Lancer une partie
         </button>
       </div>
     );
@@ -153,7 +162,7 @@ const Game = () => {
   if (playOnline && !opponentName) {
     return (
       <div className="waiting">
-        <p>Waiting for opponent</p>
+        <p>En attente d'un adversaire</p>
       </div>
     );
   }
@@ -177,7 +186,7 @@ const Game = () => {
         </div>
       </div>
       <div>
-        <h1 className="game-heading water-background">Tic Tac Toe</h1>
+        <h1 className="game-heading water-background" style="color:white;">Tic Tac Toe</h1>
         <div className="square-wrapper">
           {gameState.map((arr, rowIndex) =>
             arr.map((e, colIndex) => {
@@ -203,21 +212,20 @@ const Game = () => {
           finishedState !== "opponentLeftMatch" &&
           finishedState !== "draw" && (
             <h3 className="finished-state">
-              {finishedState === playingAs ? "You " : finishedState} won the
-              game
+              {finishedState === playingAs ? "You " : finishedState} a gagné la partie
             </h3>
           )}
         {finishedState &&
           finishedState !== "opponentLeftMatch" &&
           finishedState === "draw" && (
-            <h3 className="finished-state">It's a Draw</h3>
+            <h3 className="finished-state">C'est une égalité</h3>
           )}
       </div>
       {!finishedState && opponentName && (
-        <h2>You are playing against {opponentName}</h2>
+        <h2>Vous jouez contre {opponentName}</h2>
       )}
       {finishedState && finishedState === "opponentLeftMatch" && (
-        <h2>You won the match, Opponent has left</h2>
+        <h2>Vous avez gagner le match, votre adversaire à quitté</h2>
       )}
     </div>
   );

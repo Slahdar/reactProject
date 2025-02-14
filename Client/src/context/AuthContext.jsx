@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -7,21 +7,27 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation(); // Ajout de useLocation pour vérifier le chemin actuel
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setUser({ token });
     }
-    setLoading(false);  // Set loading to false after the check
+    setLoading(false);
   }, []);
 
   useEffect(() => {
-    // If the user is not authenticated, redirect them to login page
-    if (!user && !loading) {
+    // Permettre l'accès à la page de register sans redirection
+    const publicPaths = ['/login', '/register'];
+    const isPublicPath = publicPaths.includes(location.pathname);
+
+    // Rediriger vers login seulement si l'utilisateur n'est pas authentifié 
+    // et n'est pas sur une page publique
+    if (!user && !loading && !isPublicPath) {
       navigate('/login');
     }
-  }, [user, loading, navigate]);  // Add loading here to avoid redirection during loading
+  }, [user, loading, navigate, location]);
 
   const login = (token) => {
     localStorage.setItem('token', token);

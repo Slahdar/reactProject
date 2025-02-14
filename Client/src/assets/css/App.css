@@ -9,13 +9,14 @@
 .playOnline {
   font-weight: 700;
   border: none;
-  background-color: #e4ca56;
+  background-color: black;
   font-size: 60px;
   cursor: pointer;
   margin-top: 40vh;
   padding: 6px 10px;
   border-radius: 5px;
   outline: none;
+  color: white;
 }
 
 .water-background {
