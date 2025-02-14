@@ -110,13 +110,15 @@ app.post("/signup", async (req, res) => {
     console.log('URL de confirmation:', confirmationUrl);
     
     const transporter = nodemailer.createTransport({
-      host: 'smtp.mail.yahoo.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER || 'reactappmax@yahoo.com',
-        pass: process.env.EMAIL_PASS || 'reactappmaxdzmdq15Ma',
-      },
+      // host: 'smtp.mail.yahoo.com',
+      // port: 587,
+      host: '127.0.0.1',
+      port: 1025,
+      // secure: false,
+      // auth: {
+      //   user: process.env.EMAIL_USER || '',
+      //   pass: process.env.EMAIL_PASS || '',
+      // },
     });
     
     const mailOptions = {
